@@ -29,6 +29,9 @@ declare module "next-auth" {
       // ...other properties
       // role: UserRole;
     } & DefaultSession["user"];
+    accessToken?: string;
+    refreshToken?: string;
+    tokenExpiresAt?: number;
   }
 
   // interface User {
@@ -44,13 +47,24 @@ declare module "next-auth" {
  */
 export const authOptions: NextAuthOptions = {
   callbacks: {
-    session: ({ session, user }) => ({
+    session: ({ session, token }) => ({
       ...session,
       user: {
         ...session.user,
-        id: user.id,
+        id: token.sub,
       },
+      accessToken: token.accessToken,
+      refreshToken: token.refreshToken,
+      tokenExpiresAt: token.expiresAt,
     }),
+    jwt: async ({ token, account }) => {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.expiresAt = account.expires_at;
+      }
+      return token;
+    },
   },
   adapter: DrizzleAdapter(db, {
     usersTable: users,
@@ -62,16 +76,13 @@ export const authOptions: NextAuthOptions = {
     SpotifyProvider({
       clientId: env.SPOTIFY_CLIENT_ID,
       clientSecret: env.SPOTIFY_CLIENT_SECRET,
+      authorization: {
+        params: {
+          scope:
+            "user-read-email playlist-read-private user-read-recently-played",
+        },
+      },
     }),
-    /**
-     * ...add more providers here.
-     *
-     * Most other providers require a bit more work than the Discord provider. For example, the
-     * GitHub provider requires you to add the `refresh_token_expires_in` field to the Account
-     * model. Refer to the NextAuth.js docs for the provider you want to use. Example:
-     *
-     * @see https://next-auth.js.org/providers/github
-     */
   ],
 };
 
