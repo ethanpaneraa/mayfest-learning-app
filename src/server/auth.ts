@@ -26,6 +26,12 @@ declare module "next-auth/jwt" {
   }
 }
 
+interface RefreshedTokens {
+  access_token: string;
+  expires_in: number;
+  refresh_token?: string;
+}
+
 export const authOptions: NextAuthOptions = {
   providers: [
     SpotifyProvider({
@@ -69,12 +75,7 @@ export const authOptions: NextAuthOptions = {
             },
           );
 
-          const refreshedTokens: {
-            access_token: string;
-            expires_in: number;
-            refresh_token?: string;
-          } = await response.json();
-
+          const refreshedTokens: RefreshedTokens = await response.json();
           if (!response.ok) {
             throw new Error("Failed to refresh access token");
           }
