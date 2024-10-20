@@ -17,6 +17,8 @@ export default async function DashboardPage() {
     redirect("/login");
   }
 
+  const placeHolderImage = "https://iili.io/HlHy9Yx.png";
+
   try {
     const [profile, playlist, recentlyPlayed] = await Promise.all([
       getSpotifyUserProfile(),
@@ -36,7 +38,7 @@ export default async function DashboardPage() {
               {playlist.items.slice(0, 6).map((playlist) => (
                 <li key={playlist.id} className="rounded bg-gray-100 p-4">
                   <Image
-                    src={playlist.images?.[0]?.url}
+                    src={playlist.images?.[0]?.url ?? placeHolderImage}
                     alt={playlist.name}
                     width={200}
                     height={200}
@@ -53,7 +55,7 @@ export default async function DashboardPage() {
               {recentlyPlayed.items.slice(0, 6).map((track) => (
                 <li key={track.track.id} className="rounded bg-gray-100 p-4">
                   <Image
-                    src={track.track.album.images?.[0]?.url}
+                    src={track.track.album.images?.[0]?.url ?? placeHolderImage}
                     alt={track.track.name}
                     width={200}
                     height={200}
