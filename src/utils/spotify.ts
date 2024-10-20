@@ -26,6 +26,9 @@ type SpotifyTrack = {
       url: string;
     }>;
   };
+  artists: Array<{
+    name: string;
+  }>;
 };
 
 type SpotifyListeningHistory = {
@@ -33,6 +36,23 @@ type SpotifyListeningHistory = {
     track: SpotifyTrack;
     played_at: string;
   }>;
+};
+
+type SpotifyArtist = {
+  id: string;
+  name: string;
+  images: Array<{
+    url: string;
+  }>;
+  popularity: number;
+};
+
+type SpotifyTopArtists = {
+  items: SpotifyArtist[];
+};
+
+type SpotifyTopTracks = {
+  items: SpotifyTrack[];
 };
 
 async function getAccessToken() {
@@ -45,12 +65,15 @@ async function spotifyFetch<T>(endpoint: string): Promise<T> {
   if (!accessToken) {
     throw new Error("No access token available");
   }
+  console.log("Using access token:", accessToken); // Add this line for debugging
   const response = await fetch(`${SPOTIFY_API_BASE_URL}${endpoint}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },
   });
   if (!response.ok) {
+    const errorBody = await response.text();
+    console.error("Spotify API error:", response.status, errorBody);
     throw new Error(`Failed to fetch from Spotify API: ${response.statusText}`);
   }
   return response.json() as Promise<T>;
@@ -68,6 +91,10 @@ export async function getSpotifyUserListeningHistory(): Promise<SpotifyListening
   return spotifyFetch<SpotifyListeningHistory>("/me/player/recently-played");
 }
 
-export async function getSpotifyUserRecentlyPlayed(): Promise<SpotifyListeningHistory> {
-  return spotifyFetch<SpotifyListeningHistory>("/me/player/recently-played");
+export async function getSpotifyTopArtists(): Promise<SpotifyTopArtists> {
+  return spotifyFetch<SpotifyTopArtists>("/me/top/artists");
+}
+
+export async function getSpotifyTopTracks(): Promise<SpotifyTopTracks> {
+  return spotifyFetch<SpotifyTopTracks>("/me/top/tracks");
 }

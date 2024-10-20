@@ -40,13 +40,13 @@ export default async function RootLayout({
                 <div className="flex items-center space-x-4">
                   {session ? (
                     <>
-                      <Link href="/dashboard">
+                      <Link href="/top-artists">
                         <Button variant="ghost">Top Artists</Button>
                       </Link>
-                      <Link href="/dashboard">
+                      <Link href="/top-tracks">
                         <Button variant="ghost">Top Tracks</Button>
                       </Link>
-                      <Link href="/dashboard">
+                      <Link href="/recently-played">
                         <Button variant="ghost">Recently Played</Button>
                       </Link>
                       <Link href="/api/auth/signout">
