@@ -38,19 +38,21 @@ export default async function RootLayout({
                   </span>
                 </Link>
                 <div className="flex items-center space-x-4">
-                  <Link href="/dashboard">
-                    <Button variant="ghost">Top Artists</Button>
-                  </Link>
-                  <Link href="/dashboard">
-                    <Button variant="ghost">Top Tracks</Button>
-                  </Link>
-                  <Link href="/dashboard">
-                    <Button variant="ghost">Recently Played</Button>
-                  </Link>
                   {session ? (
-                    <Link href="/api/auth/signout">
-                      <Button variant="outline">Sign out</Button>
-                    </Link>
+                    <>
+                      <Link href="/dashboard">
+                        <Button variant="ghost">Top Artists</Button>
+                      </Link>
+                      <Link href="/dashboard">
+                        <Button variant="ghost">Top Tracks</Button>
+                      </Link>
+                      <Link href="/dashboard">
+                        <Button variant="ghost">Recently Played</Button>
+                      </Link>
+                      <Link href="/api/auth/signout">
+                        <Button variant="outline">Sign out</Button>
+                      </Link>
+                    </>
                   ) : (
                     <Link href="/login">
                       <Button className="bg-green-500 text-white hover:bg-green-600">
