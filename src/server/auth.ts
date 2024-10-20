@@ -75,7 +75,7 @@ export const authOptions: NextAuthOptions = {
             },
           );
 
-          const refreshedTokens: RefreshedTokens = await response.json();
+          const refreshedTokens = (await response.json()) as RefreshedTokens;
           if (!response.ok) {
             throw new Error("Failed to refresh access token");
           }
