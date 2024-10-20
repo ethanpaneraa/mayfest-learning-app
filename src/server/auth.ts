@@ -33,7 +33,8 @@ export const authOptions: NextAuthOptions = {
       clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
       authorization: {
         params: {
-          scope: "user-read-email playlist-read-private user-top-read",
+          scope:
+            "user-read-email playlist-read-private user-top-read user-read-recently-played",
         },
       },
     }),

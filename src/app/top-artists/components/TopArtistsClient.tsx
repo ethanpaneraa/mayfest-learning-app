@@ -69,13 +69,15 @@ export default function TopArtistsClient({
         {artists.items.map((artist) => (
           <Card key={artist.id} className="overflow-hidden">
             <CardHeader className="p-0">
-              <Image
-                src={artist.images[0]?.url ?? placeHolderImage}
-                alt={artist.name}
-                width={400}
-                height={400}
-                className="h-auto w-full object-cover"
-              />
+              <div className="relative h-64 w-full">
+                <Image
+                  src={artist.images[0]?.url ?? placeHolderImage}
+                  alt={artist.name}
+                  layout="fill"
+                  objectFit="cover"
+                  className="rounded-lg"
+                />
+              </div>
             </CardHeader>
             <CardContent className="p-4">
               <CardTitle className="text-lg">{artist.name}</CardTitle>
