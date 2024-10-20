@@ -8,8 +8,6 @@ import {
 } from "@/utils/spotify";
 import Image from "next/image";
 
-// const placeholderImage = "/path/to/placeholder-image.jpg"; // Update this path
-
 export default async function DashboardPage() {
   const session = await getServerSession(authOptions);
   console.log("SESSION IN DASHBOARD", session);
