@@ -4,35 +4,28 @@ This is a project aimed for newcomers to the Mayfest Productions Technology Team
 
 - [Next.js](https://nextjs.org)
 - [TypeScript](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
 - [Drizzle](https://orm.drizzle.team)
+- [Supabase](https://supabase.com/)
 - [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
 
-This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
+\_Note: Not all technologies that we use to build our projects are listed here, though this should give you enough of a general overview to get started and understand how to build scalable, modern, and professional web applications!\_
 
-## What's next? How do I make an app with this?
+_Note 2: This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`._
 
-We try to keep this project as simple as possible, so you can start with just the scaffolding we set up for you, and add additional things later when they become necessary.
+**This project was built was [Ethan Pineda](https://ethan-pineda.vercel.app/), Mayfest Productions Director of Technology 2024-2025**
 
-If you are not familiar with the different technologies used in this project, please refer to the respective docs. If you still are in the wind, please join our [Discord](https://t3.gg/discord) and ask for help.
+## What's next? How can I rebuild this project?
 
-- [Next.js](https://nextjs.org)
-- [NextAuth.js](https://next-auth.js.org)
-- [Prisma](https://prisma.io)
-- [Drizzle](https://orm.drizzle.team)
-- [Tailwind CSS](https://tailwindcss.com)
-- [tRPC](https://trpc.io)
+If you're a new member to tech team, welcome! If you're someone interested in learning more of the "behind the scenes" of our team, then feel free to use this repository as an entry point to learning more about how Mayfest Productions builds our technology and products!
 
-## Learn More
+To learn how you can get started with this project, you can check out the following [INSTRUCTION_SET_LINK_HERE] to get started!
 
-To learn more about the [T3 Stack](https://create.t3.gg/), take a look at the following resources:
+## How do I get started?
 
-- [Documentation](https://create.t3.gg/)
-- [Learn the T3 Stack](https://create.t3.gg/en/faq#what-learning-resources-are-currently-available) — Check out these awesome tutorials
+Start by \*forking this project\*\* so that you can create your own version of it. Then open [INSTRUCTION_SET_LINK_HERE] and start working on implementing the required list of features!
 
-You can check out the [create-t3-app GitHub repository](https://github.com/t3-oss/create-t3-app) — your feedback and contributions are welcome!
+In terms of deployments, follow this deployment guide for T3 stack deployments on [Vercel](https://create.t3.gg/en/deployment/vercel)
 
-## How do I deploy this?
+### Help! I need help, who I can reach out too?
 
-Follow our deployment guides for [Vercel](https://create.t3.gg/en/deployment/vercel), [Netlify](https://create.t3.gg/en/deployment/netlify) and [Docker](https://create.t3.gg/en/deployment/docker) for more information.
+Please direct all questions to [technology@dilloday.com](mailto:technology@dilloday.com)
