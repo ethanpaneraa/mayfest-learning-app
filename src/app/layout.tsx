@@ -6,7 +6,7 @@ import { type Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
 import { Button } from "@/components/ui/button";
-
+import Footer from "@/components/ui/footer";
 export const metadata: Metadata = {
   title: "Spotify Stats",
   description: "View your personal Spotify statistics and insights.",
@@ -65,6 +65,7 @@ export default async function RootLayout({
             </div>
           </nav>
           <main>{children}</main>
+          <Footer />
         </div>
       </body>
     </html>
