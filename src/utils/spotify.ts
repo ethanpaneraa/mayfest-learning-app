@@ -1,6 +1,5 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/server/auth";
-import { cookies } from "next/headers";
 const SPOTIFY_API_BASE_URL = "https://api.spotify.com/v1";
 
 type SpotifyUserProfile = {
@@ -95,7 +94,7 @@ export async function getSpotifyUserListeningHistory(): Promise<SpotifyListening
 }
 
 export async function getSpotifyTopArtists(
-  timeRange: string = "medium_term",
+  timeRange = "medium_term",
 ): Promise<SpotifyTopArtists> {
   const session = await getServerSession(authOptions);
 
@@ -122,7 +121,7 @@ export async function getSpotifyTopArtists(
 }
 
 export async function getSpotifyTopTracks(
-  timeRange: string = "medium_term",
+  timeRange = "medium_term",
 ): Promise<SpotifyTopTracks> {
   return spotifyFetch<SpotifyTopTracks>(
     `/me/top/tracks?time_range=${timeRange}&limit=50`,
