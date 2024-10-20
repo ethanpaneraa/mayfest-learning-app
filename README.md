@@ -8,9 +8,9 @@ This is a project aimed for newcomers to the Mayfest Productions Technology Team
 - [Supabase](https://supabase.com/)
 - [Tailwind CSS](https://tailwindcss.com)
 
-\_Note: Not all technologies that we use to build our projects are listed here, though this should give you enough of a general overview to get started and understand how to build scalable, modern, and professional web applications!\_
+**Note: Not all technologies that we use to build our projects are listed here, though this should give you enough of a general overview to get started and understand how to build scalable, modern, and professional web applications!**
 
-_Note 2: This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`._
+_Note 1: This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`._
 
 **This project was built was [Ethan Pineda](https://ethan-pineda.vercel.app/), Mayfest Productions Director of Technology 2024-2025**
 
