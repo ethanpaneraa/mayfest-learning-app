@@ -1,6 +1,6 @@
 import { getServerSession } from "next-auth";
 import { authOptions } from "@/server/auth";
-
+import { cookies } from "next/headers";
 const SPOTIFY_API_BASE_URL = "https://api.spotify.com/v1";
 
 type SpotifyUserProfile = {
@@ -57,7 +57,10 @@ type SpotifyTopTracks = {
 
 async function getAccessToken() {
   const session = await getServerSession(authOptions);
-  return session?.accessToken;
+  if (!session?.accessToken) {
+    throw new Error("No access token available");
+  }
+  return session.accessToken;
 }
 
 async function spotifyFetch<T>(endpoint: string): Promise<T> {
@@ -65,7 +68,7 @@ async function spotifyFetch<T>(endpoint: string): Promise<T> {
   if (!accessToken) {
     throw new Error("No access token available");
   }
-  console.log("Using access token:", accessToken); // Add this line for debugging
+  console.log("Using access token:", accessToken);
   const response = await fetch(`${SPOTIFY_API_BASE_URL}${endpoint}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
@@ -91,10 +94,37 @@ export async function getSpotifyUserListeningHistory(): Promise<SpotifyListening
   return spotifyFetch<SpotifyListeningHistory>("/me/player/recently-played");
 }
 
-export async function getSpotifyTopArtists(): Promise<SpotifyTopArtists> {
-  return spotifyFetch<SpotifyTopArtists>("/me/top/artists");
+export async function getSpotifyTopArtists(
+  timeRange: string = "medium_term",
+): Promise<SpotifyTopArtists> {
+  const session = await getServerSession(authOptions);
+
+  if (!session?.accessToken) {
+    throw new Error("No access token available");
+  }
+
+  const response = await fetch(
+    `${SPOTIFY_API_BASE_URL}/me/top/artists?time_range=${timeRange}&limit=50`,
+    {
+      headers: {
+        Authorization: `Bearer ${session.accessToken}`,
+      },
+    },
+  );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    console.error("Spotify API error:", response.status, errorBody);
+    throw new Error(`Failed to fetch from Spotify API: ${response.statusText}`);
+  }
+
+  return response.json() as Promise<SpotifyTopArtists>;
 }
 
-export async function getSpotifyTopTracks(): Promise<SpotifyTopTracks> {
-  return spotifyFetch<SpotifyTopTracks>("/me/top/tracks");
+export async function getSpotifyTopTracks(
+  timeRange: string = "medium_term",
+): Promise<SpotifyTopTracks> {
+  return spotifyFetch<SpotifyTopTracks>(
+    `/me/top/tracks?time_range=${timeRange}&limit=50`,
+  );
 }

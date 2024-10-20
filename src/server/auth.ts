@@ -1,26 +1,16 @@
-import { DrizzleAdapter } from "@auth/drizzle-adapter";
 import {
   getServerSession,
   type DefaultSession,
   type NextAuthOptions,
 } from "next-auth";
-import { type Adapter } from "next-auth/adapters";
 import SpotifyProvider from "next-auth/providers/spotify";
-
-import { env } from "@/env";
-import { db } from "@/server/db";
-import {
-  accounts,
-  sessions,
-  users,
-  verificationTokens,
-} from "@/server/db/schema";
 
 declare module "next-auth" {
   interface Session extends DefaultSession {
     accessToken?: string;
     refreshToken?: string;
     expiresAt?: number;
+    error?: string;
     user: {
       id: string;
     } & DefaultSession["user"];
@@ -32,14 +22,15 @@ declare module "next-auth/jwt" {
     accessToken?: string;
     refreshToken?: string;
     expiresAt?: number;
+    error?: string;
   }
 }
 
 export const authOptions: NextAuthOptions = {
   providers: [
     SpotifyProvider({
-      clientId: env.SPOTIFY_CLIENT_ID,
-      clientSecret: env.SPOTIFY_CLIENT_SECRET,
+      clientId: process.env.SPOTIFY_CLIENT_ID!,
+      clientSecret: process.env.SPOTIFY_CLIENT_SECRET!,
       authorization: {
         params: {
           scope: "user-read-email playlist-read-private user-top-read",
@@ -47,32 +38,64 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }) as Adapter,
   callbacks: {
     async jwt({ token, account }) {
       if (account) {
         token.accessToken = account.access_token;
         token.refreshToken = account.refresh_token;
-        token.expiresAt = account.expires_at;
+        token.expiresAt = account.expires_at! * 1000;
       }
+
+      if (
+        token?.accessToken &&
+        token.expiresAt &&
+        Date.now() > token.expiresAt
+      ) {
+        try {
+          const response = await fetch(
+            "https://accounts.spotify.com/api/token",
+            {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/x-www-form-urlencoded",
+              },
+              body: new URLSearchParams({
+                grant_type: "refresh_token",
+                refresh_token: token.refreshToken as string,
+                client_id: process.env.SPOTIFY_CLIENT_ID!,
+                client_secret: process.env.SPOTIFY_CLIENT_SECRET!,
+              }),
+            },
+          );
+
+          const refreshedTokens = await response.json();
+
+          if (!response.ok) {
+            throw refreshedTokens;
+          }
+
+          return {
+            ...token,
+            accessToken: refreshedTokens.access_token,
+            expiresAt: Date.now() + refreshedTokens.expires_in * 1000,
+            refreshToken: refreshedTokens.refresh_token ?? token.refreshToken,
+          };
+        } catch (error) {
+          console.error("Error refreshing access token", error);
+          return { ...token, error: "RefreshAccessTokenError" };
+        }
+      }
+
       return token;
     },
     async session({ session, token }) {
       session.accessToken = token.accessToken;
       session.refreshToken = token.refreshToken;
       session.expiresAt = token.expiresAt;
+      session.error = token.error;
       return session;
     },
   },
-  session: {
-    strategy: "jwt",
-  },
-  debug: true,
 };
 
 export const getServerAuthSession = () => getServerSession(authOptions);
