@@ -71,7 +71,7 @@ export default function Footer() {
         </div>
         <span className="text-sm">
           &copy; {new Date().getFullYear()} Mayfest Productions - All rights
-          reserved. Built with love by Ethan Pineda.
+          reserved. Built by Ethan Pineda
         </span>
       </div>
     </footer>
