@@ -12,12 +12,20 @@ type SpotifyPlaylist = {
   items: Array<{
     id: string;
     name: string;
+    images: Array<{
+      url: string;
+    }>;
   }>;
 };
 
 type SpotifyTrack = {
   id: string;
   name: string;
+  album: {
+    images: Array<{
+      url: string;
+    }>;
+  };
 };
 
 type SpotifyListeningHistory = {
@@ -34,6 +42,9 @@ async function getAccessToken() {
 
 async function spotifyFetch<T>(endpoint: string): Promise<T> {
   const accessToken = await getAccessToken();
+  if (!accessToken) {
+    throw new Error("No access token available");
+  }
   const response = await fetch(`${SPOTIFY_API_BASE_URL}${endpoint}`, {
     headers: {
       Authorization: `Bearer ${accessToken}`,

@@ -16,7 +16,24 @@ import {
   verificationTokens,
 } from "@/server/db/schema";
 
-console.log("Auth options are being configured");
+declare module "next-auth" {
+  interface Session extends DefaultSession {
+    accessToken?: string;
+    refreshToken?: string;
+    expiresAt?: number;
+    user: {
+      id: string;
+    } & DefaultSession["user"];
+  }
+}
+
+declare module "next-auth/jwt" {
+  interface JWT {
+    accessToken?: string;
+    refreshToken?: string;
+    expiresAt?: number;
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -38,54 +55,25 @@ export const authOptions: NextAuthOptions = {
     verificationTokensTable: verificationTokens,
   }) as Adapter,
   callbacks: {
-    async signIn({ user, account, profile }) {
-      console.log("Sign In Callback", { user, account, profile });
-      return true;
-    },
-    async redirect({ url, baseUrl }) {
-      console.log("Redirect Callback", { url, baseUrl });
-      return url.startsWith(baseUrl) ? url : baseUrl;
-    },
-    async session({ session, user, token }) {
-      console.log("Session Callback", { session, user, token });
-      return session;
-    },
-    async jwt({ token, user, account, profile }) {
-      console.log("JWT Callback", { token, user, account, profile });
+    async jwt({ token, account }) {
+      if (account) {
+        token.accessToken = account.access_token;
+        token.refreshToken = account.refresh_token;
+        token.expiresAt = account.expires_at;
+      }
       return token;
     },
+    async session({ session, token }) {
+      session.accessToken = token.accessToken;
+      session.refreshToken = token.refreshToken;
+      session.expiresAt = token.expiresAt;
+      return session;
+    },
   },
-  events: {
-    async signIn(message) {
-      console.log("Sign In Event", message);
-    },
-    async signOut(message) {
-      console.log("Sign Out Event", message);
-    },
-    async createUser(message) {
-      console.log("Create User Event", message);
-    },
-    async linkAccount(message) {
-      console.log("Link Account Event", message);
-    },
-    async session(message) {
-      console.log("Session Event", message);
-    },
+  session: {
+    strategy: "jwt",
   },
   debug: true,
-  logger: {
-    error(code, metadata) {
-      console.error("NextAuth Error", { code, metadata });
-    },
-    warn(code) {
-      console.warn("NextAuth Warning", code);
-    },
-    debug(code, metadata) {
-      console.log("NextAuth Debug", { code, metadata });
-    },
-  },
 };
 
 export const getServerAuthSession = () => getServerSession(authOptions);
-
-console.log("Auth configuration completed");
