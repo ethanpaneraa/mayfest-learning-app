@@ -1,5 +1,14 @@
 # Mayfest Productions Technology Stack Learning App
 
+This is a project aimed for newcomers to the Mayfest Productions Technology Team. The purpose of this repository is for newcomers to be able to learn the general Mayfest Technology Tech Stack which consist of the following technologies:
+
+- [Next.js](https://nextjs.org)
+- [TypeScript](https://next-auth.js.org)
+- [Prisma](https://prisma.io)
+- [Drizzle](https://orm.drizzle.team)
+- [Tailwind CSS](https://tailwindcss.com)
+- [tRPC](https://trpc.io)
+
 This is a [T3 Stack](https://create.t3.gg/) project bootstrapped with `create-t3-app`.
 
 ## What's next? How do I make an app with this?
