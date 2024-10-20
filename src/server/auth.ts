@@ -16,62 +16,9 @@ import {
   verificationTokens,
 } from "@/server/db/schema";
 
-/**
- * Module augmentation for `next-auth` types. Allows us to add custom properties to the `session`
- * object and keep type safety.
- *
- * @see https://next-auth.js.org/getting-started/typescript#module-augmentation
- */
-declare module "next-auth" {
-  interface Session extends DefaultSession {
-    user: {
-      id: string;
-      // ...other properties
-      // role: UserRole;
-    } & DefaultSession["user"];
-    accessToken?: string;
-    refreshToken?: string;
-    tokenExpiresAt?: number;
-  }
+console.log("Auth options are being configured");
 
-  // interface User {
-  //   // ...other properties
-  //   // role: UserRole;
-  // }
-}
-
-/**
- * Options for NextAuth.js used to configure adapters, providers, callbacks, etc.
- *
- * @see https://next-auth.js.org/configuration/options
- */
 export const authOptions: NextAuthOptions = {
-  callbacks: {
-    session: ({ session, token }) => ({
-      ...session,
-      user: {
-        ...session.user,
-        id: token.sub,
-      },
-      accessToken: token.accessToken,
-      refreshToken: token.refreshToken,
-      tokenExpiresAt: token.expiresAt,
-    }),
-    jwt: async ({ token, account }) => {
-      if (account) {
-        token.accessToken = account.access_token;
-        token.refreshToken = account.refresh_token;
-        token.expiresAt = account.expires_at;
-      }
-      return token;
-    },
-  },
-  adapter: DrizzleAdapter(db, {
-    usersTable: users,
-    accountsTable: accounts,
-    sessionsTable: sessions,
-    verificationTokensTable: verificationTokens,
-  }) as Adapter,
   providers: [
     SpotifyProvider({
       clientId: env.SPOTIFY_CLIENT_ID,
@@ -84,11 +31,61 @@ export const authOptions: NextAuthOptions = {
       },
     }),
   ],
+  adapter: DrizzleAdapter(db, {
+    usersTable: users,
+    accountsTable: accounts,
+    sessionsTable: sessions,
+    verificationTokensTable: verificationTokens,
+  }) as Adapter,
+  callbacks: {
+    async signIn({ user, account, profile }) {
+      console.log("Sign In Callback", { user, account, profile });
+      return true;
+    },
+    async redirect({ url, baseUrl }) {
+      console.log("Redirect Callback", { url, baseUrl });
+      return url.startsWith(baseUrl) ? url : baseUrl;
+    },
+    async session({ session, user, token }) {
+      console.log("Session Callback", { session, user, token });
+      return session;
+    },
+    async jwt({ token, user, account, profile }) {
+      console.log("JWT Callback", { token, user, account, profile });
+      return token;
+    },
+  },
+  events: {
+    async signIn(message) {
+      console.log("Sign In Event", message);
+    },
+    async signOut(message) {
+      console.log("Sign Out Event", message);
+    },
+    async createUser(message) {
+      console.log("Create User Event", message);
+    },
+    async linkAccount(message) {
+      console.log("Link Account Event", message);
+    },
+    async session(message) {
+      console.log("Session Event", message);
+    },
+  },
+  debug: true,
+  logger: {
+    error(code, metadata) {
+      console.error("NextAuth Error", { code, metadata });
+    },
+    warn(code) {
+      console.warn("NextAuth Warning", code);
+    },
+    debug(code, metadata) {
+      console.log("NextAuth Debug", { code, metadata });
+    },
+  },
 };
 
-/**
- * Wrapper for `getServerSession` so that you don't need to import the `authOptions` in every file.
- *
- * @see https://next-auth.js.org/configuration/nextjs
- */
 export const getServerAuthSession = () => getServerSession(authOptions);
+
+console.log("Auth configuration completed");
