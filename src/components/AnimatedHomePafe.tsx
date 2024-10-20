@@ -6,7 +6,6 @@ import { Button } from "@/components/ui/button";
 import { Music, BarChart2, Clock } from "lucide-react";
 import { motion } from "framer-motion";
 
-// define the correct type for the session prop
 interface AnimatedHomePageProps {
   session: Session | null;
 }
